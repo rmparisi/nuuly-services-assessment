@@ -1,4 +1,4 @@
-package com.nuuly;
+package com.nuuly.db.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,6 +17,22 @@ public class Inventory {
 
     public Inventory(String sku, int count) {
         this.sku = sku;
+        this.count = count;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
         this.count = count;
     }
 

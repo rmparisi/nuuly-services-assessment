@@ -1,5 +1,7 @@
-package com.nuuly;
+package com.nuuly.config;
 
+import com.nuuly.service.KafkaProducerService;
+import com.nuuly.service.ProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

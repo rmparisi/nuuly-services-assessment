@@ -1,15 +1,19 @@
 package com.nuuly;
 
+import com.nuuly.data.model.PurchaseItem;
+import com.nuuly.data.response.FavoritesResponse;
+import com.nuuly.data.response.InventoryResponse;
+import com.nuuly.data.response.PurchaseResponse;
+import com.nuuly.service.FavoritesService;
+import com.nuuly.service.InventoryService;
+import com.nuuly.service.ProducerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.*;
+import java.util.List;
 
 /**
  * This is our base API server to run HTTP requests against. Currently, these are set up to just return HTTP responses
@@ -25,7 +29,10 @@ public class Controller {
     private final ProducerService producer;
 
     @Autowired
-    private InventoryRepository inventoryRepository;
+    private InventoryService inventoryService;
+
+    @Autowired
+    private FavoritesService favoritesService;
 
     @Autowired
     public Controller(ProducerService producer) {
@@ -41,37 +48,50 @@ public class Controller {
      * @return That the purchase order was created
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createPurchaseOrder(
+    @ResponseBody
+    public InventoryResponse createPurchaseOrder(
             @RequestParam("sku") String sku,
             @RequestParam("receiptAmount") int receiptAmount
     ) {
-        return new ResponseEntity<>(CREATED);
+        return inventoryService.addInventory(sku, receiptAmount);
     }
 
     /**
      * When a garment is actually purchased by us, we want to decrement the inventory to represent that the item was
-     * purchased.
+     * purchased. This method takes a JSON array in the request body to process multiple purchases at once.
      *
-     * @param sku: The item that was purchased
-     * @param amount: How many of that item that was purchased
-     * @return That the purchase was successful
+     * If a garment is not able to be purchased it will be logged and the endpoint will continue with the next time.
+     *
+     * @param items: JSON array of PurchaseItems, EX: [{
+     * 			"sku": "abc123",
+     * 			"amount": 1
+     *                },
+     *        {
+     * 			"sku": "abc1234",
+     * 			"amount": 1
+     *        }
+     * 	]
+     * @return A list of successful and failed purchases. Each failure indicates why that purchase failed via the status
+     * code.
      */
     @PostMapping("/purchase")
-    public ResponseEntity<?> purchase(
-            @RequestParam("sku") String sku,
-            @RequestParam("amount") int amount
+    @ResponseBody
+    public ResponseEntity purchase(
+            @RequestBody List<PurchaseItem> items
     ) {
-        return new ResponseEntity<>(OK);
+        PurchaseResponse pr = inventoryService.purchaseInventory(items);
+        return new ResponseEntity<PurchaseResponse>(pr, pr.getHttpStatus()) ;
     }
 
     /**
      * From a business perspective, we want to understand what our customers like and don't like. We want to get a list
-     * of favorite items ranked by how many were purchased.
+     * of favorite items ranked by how many were purchased. This data only includes items that have been purchased.
      *
-     * @return A list of favorite items
+     * @return Lists of the 3 most and least favorite items
      */
     @GetMapping("/favorites")
-    public ResponseEntity<?> favorites() {
-        return new ResponseEntity<>(OK);
+    @ResponseBody
+    public FavoritesResponse favorites() {
+        return favoritesService.getFavorites();
     }
 }

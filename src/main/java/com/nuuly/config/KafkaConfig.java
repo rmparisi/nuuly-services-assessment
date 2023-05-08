@@ -1,4 +1,4 @@
-package com.nuuly;
+package com.nuuly.config;
 
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;

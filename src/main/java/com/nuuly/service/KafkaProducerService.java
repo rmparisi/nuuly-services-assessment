@@ -1,4 +1,4 @@
-package com.nuuly;
+package com.nuuly.service;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;

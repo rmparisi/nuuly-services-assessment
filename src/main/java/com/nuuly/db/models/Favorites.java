@@ -1,4 +1,4 @@
-package com.nuuly;
+package com.nuuly.db.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,5 +25,21 @@ public class Favorites {
                 "Favorites[sku='%s', count=%d]",
                 sku, count
         );
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

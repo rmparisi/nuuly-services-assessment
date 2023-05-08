@@ -1,4 +1,4 @@
-package com.nuuly;
+package com.nuuly.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
